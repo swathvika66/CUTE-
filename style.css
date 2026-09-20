@@ -30,44 +30,46 @@ html, body {
   z-index: 10;
 }
 
-/* Character Panel (Left 50% Full-bleed) */
+/* Character Panel (Left 50%) */
 .character-panel {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   background: #dfe4f2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.character-video-wrap {
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  aspect-ratio: 16 / 9;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 16px 45px rgba(8, 9, 9, 0.12), 0 2px 8px rgba(8, 9, 9, 0.04);
+  border: 4px solid #ffffff;
+  background: #f0eefa;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.character-video-wrap {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
 .character-video-wrap video {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
+  background: #f0eefa;
 }
 
 .character-caption {
-  position: absolute;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  pointer-events: none;
-  width: 90%;
+  margin-top: 14px;
   text-align: center;
 }
 
@@ -75,14 +77,14 @@ html, body {
   display: inline-flex;
   align-items: center;
   border-radius: 100px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #3b3558;
   padding: 8px 20px;
   font-size: 14px;
   font-weight: 500;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 /* Quiz Panel (Right 50% Full-bleed) */
