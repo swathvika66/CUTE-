@@ -89,13 +89,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!bgVideo) return;
     bgVideo.loop = true;
     bgVideo.muted = true;
-    // Always attempt auto-play on mobile/tablets so eye rotation is active
+    bgVideo.defaultMuted = true;
+    bgVideo.setAttribute('muted', '');
+    bgVideo.setAttribute('playsinline', '');
+    bgVideo.setAttribute('webkit-playsinline', '');
+    
     const playPromise = bgVideo.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
-        // If browser policy required a user gesture, start playing on first touch/click
-        document.addEventListener('touchstart', () => bgVideo.play(), { once: true });
-        document.addEventListener('click', () => bgVideo.play(), { once: true });
+        const startPlay = () => {
+          bgVideo.play().catch(() => {});
+          window.removeEventListener('touchstart', startPlay);
+          window.removeEventListener('click', startPlay);
+        };
+        window.addEventListener('touchstart', startPlay, { passive: true });
+        window.addEventListener('click', startPlay, { passive: true });
       });
     }
   }
@@ -103,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (bgVideo) {
     bgVideo.addEventListener('seeked', schedule);
     bgVideo.addEventListener('loadeddata', handleVideoReady);
+    bgVideo.addEventListener('loadedmetadata', handleVideoReady);
     bgVideo.addEventListener('canplay', handleVideoReady);
     bgVideo.addEventListener('canplaythrough', handleVideoReady);
     
