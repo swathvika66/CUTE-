@@ -53,8 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let frame = 0;
   let desiredTime = 0;
   let pointer = null;
-  let idleTimer = null;
-  let idleAngle = 0;
+  const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 
   function seek() {
     frame = 0;
@@ -80,31 +79,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   function handlePointerMove(e) {
-    pointer = { x: e.clientX, y: e.clientY };
-    updateTarget();
-  }
-  function handleTouchMove(e) {
-    if (e.touches && e.touches.length > 0) {
-      pointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    if (e.pointerType === 'mouse' || (!isTouchDevice && e.clientX)) {
+      bgVideo.pause();
+      pointer = { x: e.clientX, y: e.clientY };
       updateTarget();
     }
   }
   function handleVideoReady() {
     if (!bgVideo) return;
-    bgVideo.pause();
-    updateTarget();
-    schedule();
-  }
-
-  // Idle gentle eye movement for mobile when untouched
-  function idleEyeLoop() {
-    if (!pointer) {
-      idleAngle = (idleAngle + 0.05) % (Math.PI * 2);
-      desiredTime = timeForAngle(idleAngle);
-      schedule();
+    bgVideo.loop = true;
+    bgVideo.muted = true;
+    // Always attempt auto-play on mobile/tablets so eye rotation is active
+    const playPromise = bgVideo.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // If browser policy required a user gesture, start playing on first touch/click
+        document.addEventListener('touchstart', () => bgVideo.play(), { once: true });
+        document.addEventListener('click', () => bgVideo.play(), { once: true });
+      });
     }
   }
-  setInterval(idleEyeLoop, 200);
 
   if (bgVideo) {
     bgVideo.addEventListener('seeked', schedule);
@@ -112,18 +106,14 @@ document.addEventListener('DOMContentLoaded', () => {
     bgVideo.addEventListener('canplay', handleVideoReady);
     bgVideo.addEventListener('canplaythrough', handleVideoReady);
     
-    // Pointer and mouse events
+    // Pointer and mouse events (desktop)
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
-    window.addEventListener('pointerdown', handlePointerMove, { passive: true });
     window.addEventListener('mousemove', handlePointerMove, { passive: true });
-    
-    // Touch events for mobile & tablets
-    window.addEventListener('touchstart', handleTouchMove, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
     
     window.addEventListener('resize', updateTarget);
     window.addEventListener('scroll', updateTarget, { passive: true });
-    if (bgVideo.readyState >= 2) handleVideoReady();
+    
+    handleVideoReady();
   }
 
   // ========== QUIZ FLOW ==========
