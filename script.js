@@ -53,12 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let frame = 0;
   let desiredTime = 0;
   let pointer = null;
-  const mobile = window.matchMedia('(max-width: 700px)');
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let idleTimer = null;
+  let idleAngle = 0;
 
   function seek() {
     frame = 0;
-    if (mobile.matches || !bgVideo || bgVideo.seeking) return;
+    if (!bgVideo || bgVideo.seeking) return;
     if (Math.abs(bgVideo.currentTime - desiredTime) > 1 / 48) {
       bgVideo.currentTime = Math.min(desiredTime, (bgVideo.duration || 7) - 1 / 24);
     }
@@ -67,14 +67,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!frame) frame = requestAnimationFrame(seek);
   }
   function updateTarget() {
-    if (mobile.matches || !pointer || !bgVideo) return;
+    if (!pointer || !bgVideo) return;
     const rect = bgVideo.getBoundingClientRect();
     const scale = Math.max(rect.width / 1920, rect.height / 1080);
     const eyeX = rect.left + rect.width / 2 + (948 - 960) * scale;
     const eyeY = rect.top + rect.height / 2 + (418 - 540) * scale;
     const dx = pointer.x - eyeX;
     const dy = pointer.y - eyeY;
-    if (Math.hypot(dx, dy) > 8) {
+    if (Math.hypot(dx, dy) > 6) {
       desiredTime = timeForAngle(Math.atan2(dy, dx));
       schedule();
     }
@@ -83,25 +83,44 @@ document.addEventListener('DOMContentLoaded', () => {
     pointer = { x: e.clientX, y: e.clientY };
     updateTarget();
   }
-  function handleVideoReady() {
-    if (!bgVideo) return;
-    bgVideo.loop = mobile.matches;
-    if (mobile.matches && !reducedMotion.matches) {
-      bgVideo.play().catch(() => {});
-    } else {
-      bgVideo.pause();
-      if (!mobile.matches) { updateTarget(); schedule(); }
+  function handleTouchMove(e) {
+    if (e.touches && e.touches.length > 0) {
+      pointer = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      updateTarget();
     }
   }
+  function handleVideoReady() {
+    if (!bgVideo) return;
+    bgVideo.pause();
+    updateTarget();
+    schedule();
+  }
+
+  // Idle gentle eye movement for mobile when untouched
+  function idleEyeLoop() {
+    if (!pointer) {
+      idleAngle = (idleAngle + 0.05) % (Math.PI * 2);
+      desiredTime = timeForAngle(idleAngle);
+      schedule();
+    }
+  }
+  setInterval(idleEyeLoop, 200);
 
   if (bgVideo) {
     bgVideo.addEventListener('seeked', schedule);
     bgVideo.addEventListener('loadeddata', handleVideoReady);
     bgVideo.addEventListener('canplay', handleVideoReady);
     bgVideo.addEventListener('canplaythrough', handleVideoReady);
-    mobile.addEventListener('change', handleVideoReady);
-    reducedMotion.addEventListener('change', handleVideoReady);
+    
+    // Pointer and mouse events
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    window.addEventListener('pointerdown', handlePointerMove, { passive: true });
+    window.addEventListener('mousemove', handlePointerMove, { passive: true });
+    
+    // Touch events for mobile & tablets
+    window.addEventListener('touchstart', handleTouchMove, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    
     window.addEventListener('resize', updateTarget);
     window.addEventListener('scroll', updateTarget, { passive: true });
     if (bgVideo.readyState >= 2) handleVideoReady();
