@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Discover Your True Soul Aura Color ✨</title>
+  <meta property="og:title" content="✨ Discover Your True Soul Aura Color ✨">
+  <meta property="og:description" content="Take this quick 30-second personality quiz to reveal your celestial aura reading! 💖🌸">
+  <link rel="preload" as="image" href="horror.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- MAIN SIDE-BY-SIDE INTERFACE -->
+  <main class="main-layout" id="mainLayout">
+    
+    <!-- LEFT PANEL: Interactive Eye-Tracking Character -->
+    <div class="character-panel">
+      <div class="character-video-wrap">
+        <video id="bgVideo" muted playsinline preload="auto" 
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260908_073327_03643c0a-db33-417a-ae8f-4a39259c7f9c.mp4">
+        </video>
+      </div>
+      <div class="character-caption">
+        <span class="caption-tag">🌸 Aura Guardian is watching your answers ✨</span>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Quiz Questions -->
+    <div class="quiz-panel">
+      <div class="quiz-card">
+        
+        <!-- Progress Bar & Dots -->
+        <div class="quiz-header">
+          <span class="quiz-badge">✨ 2026 Cosmic Reading ✨</span>
+          <div class="quiz-progress" id="quizProgress">
+            <div class="quiz-dot active"></div>
+            <div class="quiz-dot"></div>
+            <div class="quiz-dot"></div>
+            <div class="quiz-dot"></div>
+            <div class="quiz-dot"></div>
+          </div>
+        </div>
+
+        <!-- Step 1: Nickname Input -->
+        <div class="quiz-step active" id="step1">
+          <h2>What's your nickname? 💫</h2>
+          <p>Enter your cute name so we can calibrate your aura frequency!</p>
+          <div class="input-wrap">
+            <input type="text" class="quiz-input" id="nicknameInput" placeholder="Enter your nickname... (e.g. Alex, Bunny)" maxlength="30" autocomplete="off" autofocus>
+            <p class="error-msg" id="nicknameError">Please enter your nickname to continue! 💕</p>
+            <button class="quiz-btn" id="nicknameBtn">Continue ➔</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Question 1 -->
+        <div class="quiz-step" id="step2">
+          <h2>Pick your dream escape 🌴</h2>
+          <p>Which place calls out to your soul?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-step="2"><span class="opt-icon">🏖️</span> Pink Sand Tropical Beach</button>
+            <button class="quiz-option" data-step="2"><span class="opt-icon">🏔️</span> Cozy Snowy Mountain Cabin</button>
+            <button class="quiz-option" data-step="2"><span class="opt-icon">🌸</span> Cherry Blossom Garden in Kyoto</button>
+            <button class="quiz-option" data-step="2"><span class="opt-icon">☕</span> Aesthetic Parisian Bakery Cafe</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Question 2 -->
+        <div class="quiz-step" id="step3">
+          <h2>What is your spirit vibe? 🦋</h2>
+          <p>Trust your immediate first instinct</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-step="3"><span class="opt-icon">☀️</span> Warm Sunshine & Positivity</button>
+            <button class="quiz-option" data-step="3"><span class="opt-icon">🌙</span> Mysterious Midnight Dreamer</button>
+            <button class="quiz-option" data-step="3"><span class="opt-icon">🌊</span> Calm Ocean Flow</button>
+            <button class="quiz-option" data-step="3"><span class="opt-icon">✨</span> Starlight Magic & Sparkle</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Question 3 -->
+        <div class="quiz-step" id="step4">
+          <h2>Pick your comfort treat 🍰</h2>
+          <p>What gives you instant happiness?</p>
+          <div class="quiz-options">
+            <button class="quiz-option" data-step="4"><span class="opt-icon">🍓</span> Strawberry Glazed Mochi</button>
+            <button class="quiz-option" data-step="4"><span class="opt-icon">🧋</span> Brown Sugar Boba Milk Tea</button>
+            <button class="quiz-option" data-step="4"><span class="opt-icon">🍯</span> Warm Honey Butter Waffles</button>
+            <button class="quiz-option" data-step="4"><span class="opt-icon">🍫</span> Double Dark Chocolate Brownie</button>
+          </div>
+        </div>
+
+        <!-- Step 5: Final Submission -->
+        <div class="quiz-step" id="step5">
+          <h2>Your Aura is Calculated! 🔮</h2>
+          <p>All answers recorded. Ready to unlock your rare soul aura reading?</p>
+          <div class="quiz-options">
+            <button class="quiz-option final-btn" id="finalOpt1"><span class="opt-icon">💖</span> Yes! Reveal My Lucky Aura ✨</button>
+            <button class="quiz-option final-btn" id="finalOpt2"><span class="opt-icon">🔮</span> Discover My Destiny 🌈</button>
+          </div>
+          <button class="quiz-btn submit-btn" id="revealBtn">✨ Reveal My Soul Aura Now ✨</button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- JUMPSCARE FULLSCREEN OVERLAY -->
+  <div class="jumpscare-overlay" id="jumpscareOverlay">
+    <div class="red-strobe"></div>
+    <div class="blood-vignette"></div>
+    <div class="horror-image-wrapper">
+      <img src="horror.png" alt="Scary face">
+    </div>
+    <div class="creepy-text">
+      <h1 id="creepyVoiceText">HIIII...</h1>
+      <h2 id="creepyNickname"></h2>
+    </div>
+    <button class="prank-reset" id="prankResetBtn">It's a prank! 😂 (Play Again)</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
